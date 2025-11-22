@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin+Condensed">
+    <link rel="icon" type="image/x-icon" href="assets/favico.png">
+    <title>MILVO - Organic Milk Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'milvo-sketch-dark': '#222222',
+                        'milvo-sketch-accent': '#3060ad', /* Deep Blue Accent */
+                        'white': '#ffffff',
+                        'offwhite': '#f7f7f7',
+                        'primary': '#222222',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-primary: #222222; /* Dark Sketch */
+            --color-accent: #3060ad; /* New Deep Blue Accent */
+            --color-white: #ffffff;
+            --color-offwhite: #f7f7f7;
+        }
+
+        /* Base site styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-white);
+            color: var(--color-primary);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            padding-top: 64px; /* Space for the fixed header */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Header style for use on DARK (blue) backgrounds */
+        .sketch-header-dark {
+            background-color: var(--color-primary); /* Dark box */
+            color: var(--color-white);
+            padding: 0.5rem 2rem;
+            display: inline-block;
+            transform: skew(-10deg);
+            box-shadow: 4px 4px 0 var(--color-white); /* White shadow for contrast on blue */
+            border: 2px solid var(--color-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Header style for use on LIGHT (white) backgrounds */
+        .sketch-header-light {
+            background-color: var(--color-primary); /* Dark box */
+            color: var(--color-white);
+            padding: 0.5rem 2rem;
+            display: inline-block;
+            transform: skew(-10deg);
+            box-shadow: 4px 4px 0 var(--color-accent); /* Blue shadow for contrast on white */
+            border: 2px solid var(--color-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Wavy divider fill color (always the blue accent) */
+        .wave-fill {
+            fill: var(--color-accent); 
+        }
+
+        /* Buttons (always look good on both light and dark) */
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -4px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, background-color 0.2s ease;
+        }
+        .btn-primary:hover { background-color: #244883; transform: scale(1.05); }
+
+        /* Drip Button Styles */
+        .drip-btn-container {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .drip-btn {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            transition: .5s ease;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .4);
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .drip-btn:hover {
+            box-shadow: none;
+        }
+
+        .drip {
+            position: absolute;
+            top: 100%; /* Start inside the button, vertically centered */
+            width: 15px;
+            height: 0px;
+            border-radius: 0 0 50px 50px; /* Rounded bottom for drip shape */
+            transition: height 1s ease;
+            z-index: 1;
+        }
+
+        .drip-1 { left: 20%; transition-duration: 0.9s; }
+        .drip-2 { left: 60%; transition-duration: 1.5s; }
+        .drip-3 { left: 70%; transition-duration: 0.7s; }
+
+        .drip-btn:hover + .drip-1 { height: 35px; }
+        .drip-btn:hover ~ .drip-2 { height: 60px; }
+        .drip-btn:hover ~ .drip-3 { height: 25px; }
+
+        /* Light BG Button (Blue Button) */
+        .drip-btn-light { background-color: var(--color-accent); }
+        .drip-btn-light:hover { background-color: #244883; }
+        .drip-light { background: #244883; }
+
+        /* Dark BG Button (White Button) */
+        .drip-btn-dark {
+            background-color: var(--color-white);
+            color: var(--color-accent);
+            border: 2px solid var(--color-accent);
+        }
+        .drip-btn-dark:hover { background-color: #f0f0f0; }
+        .drip-dark { background: #f0f0f0; }
+
+        /* Inputs */
+        .input-field {
+            border: 2px solid var(--color-primary);
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px var(--color-accent);
+        }
+
+        /* Global link hover for contrast */
+        a:hover { color: var(--color-accent); }
+
+        /* Styles for Gemini Feature */
+        #recipe-loading {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--color-accent); 
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            display: none;
+        }
+        #recipe-output {
+            text-align: left;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--color-offwhite);
+            border-radius: 0.5rem;
+            color: var(--color-primary);
+        }
+        #recipe-output h3 {
+            font-size: 1.5rem;
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        #recipe-output h4 {
+            font-size: 1.25rem;
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        #recipe-output ul, #recipe-output ol {
+            list-style-position: inside;
+            margin-left: 0.5rem;
+        }
+        #recipe-output ul { list-style-type: disc; }
+        #recipe-output ol { list-style-type: decimal; }
+        #recipe-output li { margin-bottom: 0.25rem; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+.water-drops {
+  position: fixed; /* Changed from absolute to relative */
+  width: 100px;
+  height: 120px;
+  margin: auto;
+  filter: url('#liquid');
+  z-index: 40;
+  top: -36px;
+}
+
+.water-drops-container {
+  display: flex; /* Use flexbox to position drops horizontally */
+  justify-content: space-around; /* Distribute drops evenly */
+  width: 100%; /* Take full width of the parent */
+  position: absolute;
+  left: 0;
+  top: 0;
+  top: -56px;
+}
+
+.drop1, .drop2 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+}
+
+.drop1 {
+  width: 90px;
+  height: 16px;
+  bottom: 2px;
+  border-radius: 0;
+}
+
+.drop2 {
+  width: 21px;
+  height: 24px;
+  border-radius: 50%;
+  bottom: 0;
+  animation: drop 1.3s cubic-bezier(1,.19,.66,.12) .5s infinite;
+}
+
+@keyframes drop {
+  0% {
+    bottom: 0;
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    bottom: -200px;
+    opacity: 1;
+  }
+}
+    </style>
+</head>
+<body class="antialiased">
+    <!-- WhatsApp Icon --><a href="https://wa.me/+8801783382431" target="_blank" class="whatsapp-icon fixed z-50 h-10 w-10 bottom-[15px] right-[15px]">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/479px-WhatsApp.svg.png" alt="WhatsApp">
+    </a>
+    <!-- <div class="page_load_effect"><img src="assets/pageloadanimation.png" alt=""></div> -->
+    
+    <!-- Header (BLUE Background) --><header class="fixed top-0 left-0 right-0 z-50 shadow-lg text-white bg-milvo-sketch-accent" style="height: auto;">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center h-[83.33px]">
+            <!-- Logo - White on Blue --><a href="#" class="flex items-center space-x-2 relative z-50">
+                <img src="assets/logo.png?text=MILVO" alt="MILVO Logo" class="h-10 w-auto" 
+                     onerror="this.src='https://placehold.co/100x40/000000/ffffff?text=MILVO'; this.onerror=null;">
+            </a>
+            
+            <!-- Desktop Nav -->
+            <div id="nav-links" class="hidden md:flex items-center space-x-8 relative z-50 text-white">
+                <a href="#hero" class="font-medium transition-colors hover:text-offwhite hover:font-bold">Home</a>
+                <a href="#about" class="font-medium transition-colors hover:text-offwhite hover:font-bold">About Us</a>
+                <a href="#delivery" class="font-medium transition-colors hover:text-offwhite hover:font-bold">How it Works</a>
+                <a href="#gemini-feature" class="font-medium transition-colors hover:text-offwhite hover:font-bold">Milvo.Ai</a>
+                <!-- <a href="#contact" class="font-medium transition-colors hover:text-offwhite">Contact</a> -->
+            </div>
+            <div class="hidden md:flex inline-block drip-btn-container">
+                    <a href="#contact" class="drip-btn drip-btn-dark">Contact Us</a>
+                    <div class="drip drip-1 drip-dark"></div>
+                    <div class="drip drip-2 drip-dark"></div>
+                    <div class="drip drip-3 drip-dark"></div>
+            </div>
+
+            <!-- Mobile Menu Button - White icon on blue background -->
+            <div class="flex md:hidden items-center space-x-4">
+                <button id="menu-btn" class="z-50 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu (Hidden by default) -->
+    <div id="mobile-menu" class="fixed top-0 right-0 w-auto pl-3 pr-12 h-full shadow-lg bg-milvo-sketch-accent/95 z-40 pt-24 text-left border-l-2 border-solid border-[#ffffff54] transform transition-transform duration-300 ease-in-out translate-x-full">
+        <div class="flex flex-col space-y-8 text-2xl text-white">
+            <a class="hover:text-white hover:font-bold" href="#hero">Home</a>
+            <a class="hover:text-white hover:font-bold" href="#about">About Us</a>
+            <a class="hover:text-white hover:font-bold" href="#delivery">How it Works</a>
+            <a class="hover:text-white hover:font-bold" href="#gemini-feature">Milvo.Ai</a>
+            <div class="mt-8 inline-block drip-btn-container w-[150px]">
+                <a href="#contact" class="drip-btn drip-btn-dark">Contact Us</a>
+                <div class="drip drip-1 drip-dark"></div>
+                <div class="drip drip-2 drip-dark"></div>
+                <div class="drip drip-3 drip-dark"></div>
+            </div>
+        </div>
+        <!-- Contact -->
+        <div>
+            <h4 class="font-bold text-white text-lg mb-4 mt-12">Contact Us</h4>
+            <ul class="space-y-2 text-offwhite">
+                <li>+880-1783382431</li>
+                <li>contact@milvo.com</li>
+                <li>Road 11, Sector 12, Uttara, Dhaka, Bangladesh</li>
+            </ul>
+        </div>
+        <!-- logo -->
+        <div class="flex justify-center">
+            <img src="assets/logo.png" alt="">
+        </div>
+    </div>
+
+    <!-- 💧 WATER DROP EFFECT -->
+    <div class="water-drops-container">
+      <div class="water-drops">
+        <div class="drop1"></div>
+        <div class="drop2"></div>
+      </div>
+    </div> 
+
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="0">
+      <defs>
+        <filter id="liquid">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix in="blur" mode="matrix"
+            values="1 0 0 0 0  
+                    0 1 0 0 0  
+                    0 0 1 0 0  
+                    0 0 0 18 -7" result="liquid" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Hero Section (BLUE Background) -->
+    <section id="hero" class="text-center overflow-hidden text-white relative z-20 bg-[#3060ad]">
+        <div class="container mx-auto px-6 mb-16 md:mb-24">
+            <!-- Sketch Art Placeholders - Adjusted for Blue BG --><img src="assets/farmsketch1.jpg?text=Farm+Scene+Sketch" 
+                 alt="Hand-drawn farm scene" 
+                 class="w-full max-w-4xl mx-auto mb-8 object-contain">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-8">
+                <!-- Bottle --><img src="assets/milk-bottle-wilth-glass.png?text=MILVO+Bottle" alt="MILVO Milk Bottle" 
+                     class="w-48 md:w-64 z-10"
+                     onerror="this.src='https://placehold.co/400x800/ffffff/000000?text=MILVO+Bottle'; this.onerror=null;">
+
+                <!-- Hero Text --><div class="max-w-xl z-10 text-left md:text-left">
+                    <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight">
+                        <img src="assets/Milvo-name-logo.png" alt=""> BRINGS FARM-FRESH GOODNESS
+                    </h1>
+                    <p class="mt-4 text-lg md:text-xl text-white">
+                        STRAIGHT TO YOUR DOORSTEP.
+                    </p>
+                    <p class="mt-4 text-base md:text-lg text-offwhite">
+                        Daily Organic Milk Delivery in Uttara, Dhaka. Experience the promise of 100% Purity.
+                    </p>
+                    <div class="mt-8 inline-block drip-btn-container">
+                        <a href="#contact" class="drip-btn drip-btn-dark">
+                            Start Your Subscription
+                        </a>
+                        <div class="drip drip-1 drip-dark"></div>
+                        <div class="drip drip-2 drip-dark"></div>
+                        <div class="drip drip-3 drip-dark"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Sketch Art Placeholders - Adjusted for Blue BG<img src="assets/milk-splash.png?text=Milk+Splash+Sketch" 
+             alt="Hand-drawn milk splash" 
+             class="w-full max-w-full mx-auto object-contain"> -->
+    </section>
+
+    <!-- Wavy Divider 1 (Separating BLUE Hero from WHITE About) --><div class="w-full overflow-hidden leading-none -mb-1 relative z-20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full h-auto transform rotate-180">
+            <!-- This is the bottom-facing (concave up) wave --><path class="wave-fill" d="M0,192L48,181.3C96,171,192,149,288,160C384,171,480,213,576,240C672,267,768,277,864,261.3C960,245,1056,203,1152,186.7C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <!-- About Us Section (WHITE Background) --><section id="about" class="bg-white text-primary pb-24 md:pb-32 relative z-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <svg viewBox="0 0 100 20" class="liquid-heading mx-auto mb-6">
+                  <defs>
+                    <linearGradient id="gradient-about" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="5%" stop-color="#3060ad"/>
+                      <stop offset="95%" stop-color="#222222"/>
+                    </linearGradient>
+                    <pattern id="wave-about" x="0" y="0" width="100%" height="100%" patternUnits="userSpaceOnUse">
+                      <path d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z" fill="url(#gradient-about)"> 
+                        <animateTransform attributeName="transform" begin="0s" dur="1.5s" type="translate" from="0,0" to="40,0" repeatCount="indefinite" />
+                      </path>
+                    </pattern>
+                  </defs>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="#f1f1f1" fill-opacity="0.5">ABOUT US</text>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="url(#wave-about)">ABOUT US</text>
+                </svg>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Image/Sketch Placeholder --><img src="assets/milvo-stylish-logo.png?text=Cows+on+Farm+Sketch" 
+                     alt="Sketch of cows on a field" 
+                     class="rounded-lg shadow-lg w-full bg-offwhite p-2">
+                
+                <!-- Content - Dark Text on White Background --><div class="text-primary">
+                    <h3 class="text-3xl md:text-4xl font-bold leading-tight">
+                        YOUR DAILY DOSE OF HEALTH & TRUST.
+                    </h3>
+                    <p class="mt-6 text-lg text-gray-700">
+                        Milvo Dairy was founded on a simple promise: to deliver the purest, most natural organic milk possible. We partner only with local farms that uphold strict organic practices, prioritizing cow health and sustainable farming.
+                    </p>
+                    <p class="mt-4 text-lg text-gray-700">
+                        From our small, quality-controlled process to your kitchen, we ensure every carton meets our high standard of 100% purity and nutrition. We are proud to serve the Uttara community with honesty and trust.
+                    </p>
+                    <div class="mt-6 inline-block drip-btn-container">
+                        <a href="#delivery" class="drip-btn drip-btn-light hover:text-offwhite">
+                            Our Process
+                        </a>
+                        <div class="drip drip-1 drip-light"></div>
+                        <div class="drip drip-2 drip-light"></div>
+                        <div class="drip drip-3 drip-light"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <hr>
+
+    <!-- "How it Works" / Delivery Section (WHITE Background) --><section id="delivery" class="bg-white py-24 md:py-32 text-primary relative z-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <svg viewBox="0 0 100 20" class="liquid-heading mx-auto mb-6">
+                  <defs>
+                    <linearGradient id="gradient-how" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="5%" stop-color="#3060ad"/>
+                      <stop offset="95%" stop-color="#222222"/>
+                    </linearGradient>
+                    <pattern id="wave-how" x="0" y="0" width="100%" height="100%" patternUnits="userSpaceOnUse">
+                      <path d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z" fill="url(#gradient-how)"> 
+                        <animateTransform attributeName="transform" begin="0s" dur="1.5s" type="translate" from="0,0" to="40,0" repeatCount="indefinite" />
+                      </path>
+                    </pattern>
+                  </defs>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="#f1f1f1" fill-opacity="0.5">HOW IT WORKS</text>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="url(#wave-about)">HOW IT WORKS</text>
+                </svg>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 mt-12">
+                <div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">Daily Home Delivery</h3>
+                    <p class="text-gray-700 mb-6">
+                        Enjoy the convenience of daily, reliable home delivery exclusively in the Uttara area. Fresh milk, effortlessly delivered for a healthier you. We believe in true freshness, so our milk travels directly from the farm to your home every morning.
+                    </p>
+                    <a href="#contact" class="font-bold text-primary border-b-2 border-milvo-sketch-accent pb-1 hover:text-milvo-sketch-accent">
+                        Let's Go!
+                    </a>
+                    <img src="assets/milvo-bottle-gallon.png?text=Sketch+of+Milk+Cans" 
+                         alt="Sketch of Milk Cans" class="w-full mt-6 object-contain rounded-lg shadow-lg">
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">100% Pure & Chemical-Free</h3>
+                    <p class="text-gray-700 mb-6">
+                        Our milk is sourced from trusted organic farms, ensuring every drop is free from harmful chemicals and additives. Every batch is tested daily in our lab to guarantee purity, nutrition, and safety. Just pure, natural goodness.
+                    </p>
+                    <a href="#about" class="font-bold text-primary border-b-2 border-milvo-sketch-accent pb-1 hover:text-milvo-sketch-accent">
+                        Learn More
+                    </a>
+                    <img src="assets/milvo-factory-filling.png?text=Sketch+of+Farm+Equipment" 
+                         alt="Sketch of Farm Equipment" class="w-full mt-6 object-contain rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+    <hr>
+    
+    <!-- ✨ Gemini Recipe Feature Section (WHITE Background) ✨ --><section id="gemini-feature" class="pt-24 md:pt-32 bg-white relative z-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <svg viewBox="0 0 100 20" class="liquid-heading mx-auto mb-6">
+                  <defs>
+                    <linearGradient id="gradient-ideas" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="5%" stop-color="#3060ad"/>
+                      <stop offset="95%" stop-color="#222222"/>
+                    </linearGradient>
+                    <pattern id="wave-ideas" x="0" y="0" width="100%" height="100%" patternUnits="userSpaceOnUse">
+                      <path d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z" fill="url(#gradient-ideas)"> 
+                        <animateTransform attributeName="transform" begin="0s" dur="1.5s" type="translate" from="0,0" to="40,0" repeatCount="indefinite" />
+                      </path>
+                    </pattern>
+                  </defs>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="#f1f1f1" fill-opacity="0.5">ASK MILVO.AI</text>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="url(#wave-ideas)">ASK MILVO.AI</text>
+                </svg>
+                <p class="text-lg text-gray-700 mb-6">
+                    Got our fresh milk but not sure what to make? Enter one ingredient you have, and our AI chef will whip up a healthy, delicious recipe for you!
+                </p>
+            </div>
+            
+            <div class="mt-8">
+                <label for="ingredient-input" class="block text-sm font-medium text-gray-700">Enter one ingredient (e.g., "oats", "banana", "eggs")</label>
+                <div class="flex flex-col sm:flex-row gap-4 mt-2">
+                    <input type="text" id="ingredient-input" class="mt-1 block w-full px-3 py-2 rounded-md shadow-sm input-field flex-grow" placeholder="e.g., Oats">
+                    <div class="drip-btn-container w-full sm:w-auto flex-shrink-0">
+                        <button id="get-recipe-btn" class="drip-btn drip-btn-light w-full">
+                            ✨ Get a Healthy Recipe
+                        </button>
+                        <div class="drip drip-1 drip-light"></div>
+                        <div class="drip drip-2 drip-light"></div>
+                        <div class="drip drip-3 drip-light"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading and Output --><div id="recipe-loading" style="display: none;"></div>
+            <div id="recipe-output" style="display: none;">
+                <!-- Gemini's response will be injected here --></div>
+        </div>
+    </section>
+
+    <!-- Wavy Divider 2 (Separating WHITE Gemini from BLUE Contact) --><div class="w-full overflow-hidden leading-none -mt-1 relative z-20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" class="w-full h-auto">
+            <!-- This is the top-facing (concave down) wave, pulling the blue contact section up --><path class="wave-fill" d="M0,192L48,181.3C96,171,192,149,288,160C384,171,480,213,576,240C672,267,768,277,864,261.3C960,245,1056,203,1152,186.7C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <!-- Contact Section (BLUE Background) --><section id="contact" class="bg-milvo-sketch-accent text-white pb-24 pt-8 md:pb-32 relative z-20 border-b border-white/20">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <svg viewBox="0 0 100 20" class="liquid-heading mx-auto mb-6">
+                  <defs>
+                    <linearGradient id="gradient-contact" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="5%" stop-color="#ffffff"/>
+                      <stop offset="95%" stop-color="#f7f7f7"/>
+                    </linearGradient>
+                    <pattern id="wave-contact" x="0" y="0" width="100%" height="100%" patternUnits="userSpaceOnUse">
+                      <path d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z" fill="url(#gradient-contact)"> 
+                        <animateTransform attributeName="transform" begin="0s" dur="1.5s" type="translate" from="0,0" to="40,0" repeatCount="indefinite" />
+                      </path>
+                    </pattern>
+                  </defs>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="black" fill-opacity="0.1">CONTACT US</text>
+                  <text text-anchor="middle" x="50" y="15" font-size="12" fill="url(#wave-contact)">CONTACT US</text>
+                </svg>
+            </div>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+                
+                <!-- Contact Info / Sketch --><div>
+                    <!-- Placeholder color updated to contrast against blue -->
+                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7297.009511870882!2d90.38476768947233!3d23.87171366301956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c410e46c4ad3%3A0x76811b89c1bbe7c9!2sRoad%20No%2011%2C%20Dhaka%201230!5e0!3m2!1sen!2sbd!4v1763568923921!5m2!1sen!2sbd" height="336" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full object-contain rounded-md"></iframe>
+                    
+                    <p class="text-lg mt-6 mb-6">
+                        If you have a problem with your order or a question for our team, please don't hesitate to send us a message or call us at <strong class="text-white">+880-1783382431</strong>.
+                    </p>
+                    <p class="text-sm text-offwhite">
+                        *We currently serve Uttara, Dhaka only.
+                    </p>
+                </div>
+
+                <!-- Contact Form --><div>
+                    <form action="#" class="space-y-4">
+                        <!-- Input fields remain styled for dark text on white input area --><input type="text" placeholder="Name" class="input-field w-full" required>
+                        <input type="email" placeholder="Email" class="input-field w-full" required>
+                        <input type="tel" placeholder="Phone Number" class="input-field w-full">
+                        <textarea placeholder="Message" rows="4" class="input-field w-full" required></textarea>
+                        <div class="drip-btn-container w-full">
+                            <button type="submit" class="drip-btn drip-btn-dark w-full">
+                                Send Message
+                            </button>
+                            <div class="drip drip-1 drip-dark"></div>
+                            <div class="drip drip-2 drip-dark"></div>
+                            <div class="drip drip-3 drip-dark"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (BLUE Background) --><footer class="bg-milvo-sketch-accent text-white py-16 relative z-20">
+        <div class="container mx-auto px-6 text-center">
+            <div class="grid md:grid-cols-4 gap-8 text-left">
+                <!-- Brand/Logo -->
+                <div>
+                    <h3 class="text-2xl font-bold font-serif mb-4"><img src="assets/logo.png?text=MILVO+Logo" alt="milvo.logo" class="h-24 w-24"></h3>
+                    <p class="text-offwhite">Farm-fresh goodness, straight to your doorstep.</p>
+                </div>
+                <!-- Navigation -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Menu</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#about" class="hover:text-offwhite transition-colors">About Us</a></li>
+                        <li><a href="#delivery" class="hover:text-offwhite transition-colors">How it Works</a></li>
+                        <li><a href="#gemini-feature" class="hover:text-offwhite transition-colors">Milvo.Ai</a></li>
+                        <li><a href="#contact" class="hover:text-offwhite transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <!-- Contact -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-offwhite">
+                        <li>+880-1783382431</li>
+                        <li>contact@milvo.com</li>
+                        <li>Road 11, Sector 12, Uttara, Dhaka, Bangladesh</li>
+                    </ul>
+                </div>
+                <!-- Social -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/MilvoOfficial" aria-label="Facebook" class="hover:opacity-80 transition-opacity"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg></a>
+                        <a href="#" aria-label="Instagram" class="hover:opacity-80 transition-opacity"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664-4.771 4.919-4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/20 mt-8 pt-8 text-center">
+                <p class="text-sm text-offwhite">&copy; 2025 MILVO Dairy. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('translate-x-full');
+            menuBtn.querySelector('svg').classList.toggle('rotate-90');
+        });
+
+        // Smooth scroll for anchor links & mobile menu close
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+
+                // Close mobile menu if it's open
+                if (!mobileMenu.classList.contains('translate-x-full')) {
+                    mobileMenu.classList.add('translate-x-full');
+                    menuBtn.querySelector('svg').classList.remove('rotate-90');
+                }
+
+                if (targetId === '#') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+
+        
+        // --- ✨ Gemini API Feature Logic ---
+
+        const recipeBtn = document.getElementById('get-recipe-btn');
+        const ingredientInput = document.getElementById('ingredient-input');
+        const recipeLoading = document.getElementById('recipe-loading');
+        const recipeOutput = document.getElementById('recipe-output');
+
+        recipeBtn.addEventListener('click', async () => {
+            const userIngredient = ingredientInput.value;
+            
+            if (!userIngredient) {
+                recipeOutput.style.display = 'block';
+                recipeOutput.innerHTML = `<p style="color: red;">Please enter an ingredient first!</p>`;
+                return;
+            }
+
+            recipeLoading.style.display = 'block';
+            recipeOutput.style.display = 'none';
+            recipeOutput.innerHTML = '';
+
+            const systemPrompt = "You are a friendly and helpful family chef. You specialize in healthy, easy-to-make recipes. You always promote the use of fresh, organic milk. Your audience is health-conscious families.";
+            
+            const userQuery = `Please give me a simple, healthy recipe that uses **organic milk** and **${userIngredient}**.
+            The recipe should be for a family (about 4 servings).
+            Format the response as simple HTML:
+            - A <h3> for the title (e.g., <h3>Healthy Banana Oat Pancakes</h3>)
+            - A <h4>Ingredients:</h4> followed by a <ul> for ingredients.
+            - A <h4>Instructions:</h4> followed by an <ol> for instructions.`;
+
+            try {
+                const htmlResponse = await callGemini(systemPrompt, userQuery);
+                recipeOutput.innerHTML = htmlResponse;
+            } catch (error) {
+                console.error("Error calling Gemini:", error);
+                recipeOutput.innerHTML = `<p style="color: red;">Sorry, I couldn't come up with a recipe right now. Please try again later.</p>`;
+            } finally {
+                recipeLoading.style.display = 'none';
+                recipeOutput.style.display = 'block';
+            }
+        });
+
+        /**
+         * Utility function to fetch with exponential backoff.
+         */
+        async function fetchWithBackoff(url, options, maxRetries = 5, baseDelay = 1000) {
+            let attempt = 0;
+            while (attempt < maxRetries) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return await response.json();
+                    } else if (response.status === 429 || response.status >= 500) {
+                        // Throttling or server error, wait and retry
+                        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        attempt++;
+                    } else {
+                        // Other client-side error, don't retry
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                } catch (error) {
+                    if (attempt + 1 >= maxRetries) {
+                        throw error; // Max retries reached
+                    }
+                    const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    attempt++;
+                }
+            }
+            throw new Error("Max retries reached for fetch request.");
+        }
+
+
+        /**
+         * Calls the Gemini API.
+         */
+        async function callGemini(systemPrompt, userQuery) {
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const result = await fetchWithBackoff(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (result.candidates && result.candidates.length > 0) {
+                const text = result.candidates[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    return text;
+                }
+            }
+            
+            throw new Error("Invalid response from Gemini API.");
+        }
+
+    });
+</script>
+</body>
+</html>
